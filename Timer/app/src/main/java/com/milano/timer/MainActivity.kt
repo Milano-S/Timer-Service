@@ -19,11 +19,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = com.milano.timer.databinding.ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnStart.setOnClickListener{ startStopTimer()}
-        binding.btnReset.setOnClickListener{ resetTimer()}
+        binding.btnStart.setOnClickListener {
+            startStopTimer()
+        }
+        binding.btnReset.setOnClickListener { resetTimer() }
 
         serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
@@ -37,15 +39,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startStopTimer() {
-        if (timeStarted){
+        if (timeStarted) {
             stopTimer()
-        }else{
+        } else {
             startTimer()
         }
     }
 
     private fun startTimer() {
-        serviceIntent.putExtra(TimerService.TIME_EXTRA,time)
+        serviceIntent.putExtra(TimerService.TIME_EXTRA, time)
         startService(serviceIntent)
         binding.btnStart.text = "Stop"
         binding.btnStart.icon = getDrawable(R.drawable.ic_baseline_pause_24)
@@ -59,9 +61,9 @@ class MainActivity : AppCompatActivity() {
         timeStarted = false
     }
 
-    private val  updateTime: BroadcastReceiver = object : BroadcastReceiver(){
+    private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            time = intent.getDoubleExtra(TimerService.TIME_EXTRA,0.0)
+            time = intent.getDoubleExtra(TimerService.TIME_EXTRA, 0.0)
             binding.tvTime.text = getTimeStringFromDouble(time)
         }
     }
@@ -69,12 +71,13 @@ class MainActivity : AppCompatActivity() {
     private fun getTimeStringFromDouble(time: Double): String {
         val resultInt = time.roundToInt()
         val hours = resultInt % 86400 / 3600
-        val minutes = resultInt % 86400%3600/60
+        val minutes = resultInt % 86400 % 3600 / 60
         val seconds = resultInt % 86400 % 3600 % 60
-        
+
         return makeTimeString(hours, minutes, seconds)
     }
 
-    private fun makeTimeString(hours: Int, min: Int, sec: Int): String = String.format("%02d:%02d:%02d", hours,min,sec)
+    private fun makeTimeString(hours: Int, min: Int, sec: Int): String =
+        String.format("%02d:%02d:%02d", hours, min, sec)
 
 }
